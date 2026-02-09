@@ -13,12 +13,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Swashbuckle.AspNetCore;
 using HRManagement.Api;
+using HRManagement.Api.Middleware;
+using HRManagement.Application.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ------------------------------------------------------------------
-// 1. DATABASE & IDENTITY SETUP
-// ------------------------------------------------------------------
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("ConnectionStrings:DefaultConnection is missing in appsettings.json.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -49,13 +49,9 @@ builder.Services.AddAuthentication(options => {
     };
 });
 
-// ------------------------------------------------------------------
-// 3. DEPENDENCY INJECTION (DI)
-// ------------------------------------------------------------------
-// Core Infrastructure (Repositories)
+
 builder.Services.AddInfrastructure(); 
 
-// Application Services
 builder.Services.AddScoped<ICourseTypeService, CourseTypeService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IEmployeeCourseService, EmployeeCourseService>();
@@ -65,23 +61,21 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ITenantService, TenantService>();
 
-// ------------------------------------------------------------------
-// 4. API & SWAGGER CONFIGURATION
-// ------------------------------------------------------------------
+builder.Services.AddAutoMapper(typeof(CourseMappingProfile).Assembly);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => options.AddJwtSecurity());
 
 var app = builder.Build();
 
-// Seed roles (Admin, HRUser) on first run
 await SeedRolesAsync(app);
-// Seed course types, courses, employees, and enrollments for tenant 1 (development)
 await SeedDataAsync(app);
 
 // ------------------------------------------------------------------
 // 5. MIDDLEWARE PIPELINE
 // ------------------------------------------------------------------
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
+
 if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -89,7 +83,6 @@ if (app.Environment.IsDevelopment()) {
 
 app.UseHttpsRedirection();
 
-// Authentication MUST come before Authorization
 app.UseAuthentication();
 app.UseAuthorization();
 

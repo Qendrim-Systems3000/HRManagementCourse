@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using HRManagement.Application.Interfaces;
@@ -12,31 +13,19 @@ namespace HRManagement.Api.Controllers;
 public class EmployeeCoursesController : ControllerBase
 {
     private readonly IEmployeeCourseService _service;
+    private readonly IMapper _mapper;
 
-    public EmployeeCoursesController(IEmployeeCourseService service)
+    public EmployeeCoursesController(IEmployeeCourseService service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     [HttpPost("enroll")]
     [Authorize(Roles = "Admin,HRUser")]
     public async Task<IActionResult> Enroll(EnrollEmployeeDto dto)
     {
-        var enrollment = new EmployeeCourse
-        {
-            EmployeeId = dto.EmployeeId,
-            CourseId = dto.CourseId,
-            StartDate = dto.StartDate,
-            EndDate = dto.EndDate,
-            Hours = dto.Hours,
-            Credits = dto.Credits,
-            DistrictCost = dto.DistrictCost,
-            EmployeeCost = dto.EmployeeCost,
-            Grade = dto.Grade,
-            Major = dto.Major,
-            Notes = dto.Notes
-        };
-
+        var enrollment = _mapper.Map<EmployeeCourse>(dto);
         try
         {
             await _service.EnrollEmployeeAsync(enrollment);
@@ -53,21 +42,7 @@ public class EmployeeCoursesController : ControllerBase
     public async Task<IActionResult> List([FromQuery] int? employeeId, [FromQuery] int? courseId)
     {
         var list = await _service.GetEnrollmentsAsync(employeeId, courseId);
-        var response = list.Select(ec => new EmployeeCourseResponseDto(
-            ec.EmployeeCourseId,
-            ec.EmployeeId,
-            ec.CourseId,
-            ec.Course?.Description ?? "",
-            ec.StartDate,
-            ec.EndDate,
-            ec.Hours,
-            ec.Credits,
-            ec.DistrictCost,
-            ec.EmployeeCost,
-            ec.Grade,
-            ec.Major,
-            ec.Notes
-        ));
+        var response = _mapper.Map<IEnumerable<EmployeeCourseResponseDto>>(list);
         return Ok(response);
     }
 
@@ -75,13 +50,7 @@ public class EmployeeCoursesController : ControllerBase
     public async Task<IActionResult> GetTranscript(int employeeId)
     {
         var transcript = await _service.GetEmployeeTranscriptAsync(employeeId);
-        var response = transcript.Select(ec => new EmployeeCourseTranscriptDto(
-            ec.EmployeeCourseId,
-            ec.EmployeeId,
-            ec.Course?.Description ?? "",
-            ec.StartDate,
-            ec.Grade
-        ));
+        var response = _mapper.Map<IEnumerable<EmployeeCourseTranscriptDto>>(transcript);
         return Ok(response);
     }
 
@@ -92,16 +61,7 @@ public class EmployeeCoursesController : ControllerBase
         var enrollment = await _service.GetEnrollmentByIdAsync(id);
         if (enrollment == null) return NotFound();
 
-        enrollment.StartDate = dto.StartDate;
-        enrollment.EndDate = dto.EndDate;
-        enrollment.Hours = dto.Hours;
-        enrollment.Credits = dto.Credits;
-        enrollment.DistrictCost = dto.DistrictCost;
-        enrollment.EmployeeCost = dto.EmployeeCost;
-        enrollment.Grade = dto.Grade;
-        enrollment.Major = dto.Major;
-        enrollment.Notes = dto.Notes;
-
+        _mapper.Map(dto, enrollment);
         await _service.UpdateEnrollmentAsync(enrollment);
         return Ok(new { Message = "Enrollment updated successfully." });
     }

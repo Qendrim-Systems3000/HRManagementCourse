@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using HRManagement.Application.DTOs;
@@ -12,17 +13,19 @@ namespace HRManagement.Api.Controllers;
 public class CourseTypesController : ControllerBase
 {
     private readonly ICourseTypeService _service;
+    private readonly IMapper _mapper;
 
-    public CourseTypesController(ICourseTypeService service)
+    public CourseTypesController(ICourseTypeService service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     [HttpGet]
     public async Task<IActionResult> List()
     {
         var list = await _service.GetAllAsync();
-        var response = list.Select(ct => new CourseTypeResponseDto(ct.CourseTypeId, ct.Description));
+        var response = _mapper.Map<IEnumerable<CourseTypeResponseDto>>(list);
         return Ok(response);
     }
 
@@ -31,14 +34,14 @@ public class CourseTypesController : ControllerBase
     {
         var ct = await _service.GetByIdAsync(id);
         if (ct == null) return NotFound();
-        return Ok(new CourseTypeResponseDto(ct.CourseTypeId, ct.Description));
+        return Ok(_mapper.Map<CourseTypeResponseDto>(ct));
     }
 
     [HttpPost]
     [Authorize(Roles = "Admin,HRUser")]
     public async Task<IActionResult> Add([FromBody] CreateCourseTypeDto dto)
     {
-        var entity = new CourseType { Description = dto.Description };
+        var entity = _mapper.Map<CourseType>(dto);
         try
         {
             await _service.CreateAsync(entity);
@@ -54,7 +57,8 @@ public class CourseTypesController : ControllerBase
     [Authorize(Roles = "Admin,HRUser")]
     public async Task<IActionResult> Edit(int id, [FromBody] UpdateCourseTypeDto dto)
     {
-        var entity = new CourseType { CourseTypeId = id, Description = dto.Description };
+        var entity = _mapper.Map<CourseType>(dto);
+        entity.CourseTypeId = id;
         try
         {
             await _service.UpdateAsync(entity);
