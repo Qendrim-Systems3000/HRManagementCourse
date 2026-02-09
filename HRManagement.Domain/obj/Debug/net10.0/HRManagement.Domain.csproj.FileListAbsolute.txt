@@ -1,0 +1,11 @@
+c:\Users\qendr\OneDrive\Desktop\HR Course Management\HRManagement.Domain\obj\Debug\net10.0\HRManagement.Domain.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\qendr\OneDrive\Desktop\HR Course Management\HRManagement.Domain\obj\Debug\net10.0\HRManagement.Domain.AssemblyInfoInputs.cache
+c:\Users\qendr\OneDrive\Desktop\HR Course Management\HRManagement.Domain\obj\Debug\net10.0\HRManagement.Domain.AssemblyInfo.cs
+c:\Users\qendr\OneDrive\Desktop\HR Course Management\HRManagement.Domain\obj\Debug\net10.0\HRManagement.Domain.csproj.CoreCompileInputs.cache
+C:\Users\qendr\OneDrive\Desktop\HR Course Management\HRManagement.Domain\bin\Debug\net10.0\HRManagement.Domain.deps.json
+C:\Users\qendr\OneDrive\Desktop\HR Course Management\HRManagement.Domain\bin\Debug\net10.0\HRManagement.Domain.dll
+C:\Users\qendr\OneDrive\Desktop\HR Course Management\HRManagement.Domain\bin\Debug\net10.0\HRManagement.Domain.pdb
+C:\Users\qendr\OneDrive\Desktop\HR Course Management\HRManagement.Domain\obj\Debug\net10.0\HRManagement.Domain.dll
+C:\Users\qendr\OneDrive\Desktop\HR Course Management\HRManagement.Domain\obj\Debug\net10.0\refint\HRManagement.Domain.dll
+C:\Users\qendr\OneDrive\Desktop\HR Course Management\HRManagement.Domain\obj\Debug\net10.0\HRManagement.Domain.pdb
+C:\Users\qendr\OneDrive\Desktop\HR Course Management\HRManagement.Domain\obj\Debug\net10.0\ref\HRManagement.Domain.dll

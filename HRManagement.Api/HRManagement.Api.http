@@ -1,0 +1,31 @@
+@HRManagement.Api_HostAddress = http://localhost:5150
+
+### Login
+POST {{HRManagement.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "YourPassword1!"
+}
+
+### Register (optional)
+# POST {{HRManagement.Api_HostAddress}}/api/auth/register
+# Content-Type: application/json
+#
+# {
+#   "email": "admin@example.com",
+#   "password": "YourPassword1!",
+#   "firstName": "Admin",
+#   "lastName": "User",
+#   "leaProfileId": 1,
+#   "role": "Admin"
+# }
+
+### Get courses (after login, copy token from response and paste below; space after "Bearer " is required)
+GET {{HRManagement.Api_HostAddress}}/api/courses
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### Get course types (same header)
+GET {{HRManagement.Api_HostAddress}}/api/coursetypes
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
