@@ -12,7 +12,12 @@ public record RegisterDto(
 );
 
 public record AuthResponseDto(
-    bool IsSuccess, 
-    string Message, 
-    string? Token = null
+    bool IsSuccess,
+    string Message,
+    string? Token = null,
+    string? RefreshToken = null,
+    DateTime? RefreshTokenExpiresAt = null
 );
+
+/// <summary>Request body for refresh token endpoint.</summary>
+public record RefreshTokenDto(string RefreshToken);

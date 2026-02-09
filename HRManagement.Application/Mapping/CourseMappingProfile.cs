@@ -9,7 +9,14 @@ public class CourseMappingProfile : Profile
     public CourseMappingProfile()
     {
         CreateMap<Course, CourseResponseDto>()
-            .ForMember(d => d.CourseTypeName, opt => opt.MapFrom(s => s.CourseType != null ? s.CourseType.Description : "N/A"));
+            .ConstructUsing(c => new CourseResponseDto(
+                c.CourseId,
+                c.Description,
+                c.CourseType != null ? c.CourseType.Description : "N/A",
+                c.StartDate,
+                c.EndDate,
+                c.Hours,
+                c.Approved));
 
         CreateMap<CreateCourseDto, Course>();
         CreateMap<UpdateCourseDto, Course>()

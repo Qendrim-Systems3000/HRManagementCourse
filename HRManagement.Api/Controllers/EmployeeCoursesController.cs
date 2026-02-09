@@ -33,7 +33,7 @@ public class EmployeeCoursesController : ControllerBase
         }
         catch (KeyNotFoundException ex)
         {
-            return NotFound(ex.Message); // If Employee/Course doesn't exist or belongs to another district
+            return NotFound(ex.Message); 
         }
     }
 

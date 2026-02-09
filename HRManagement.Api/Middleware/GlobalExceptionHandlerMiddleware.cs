@@ -63,20 +63,7 @@ public class GlobalExceptionHandlerMiddleware
             }
         };
 
-        if (_env.IsDevelopment())
-        {
-            problem.Extensions["stackTrace"] = ex.StackTrace;
-            if (ex.InnerException != null)
-            {
-                problem.Extensions["innerException"] = new
-                {
-                    type = ex.InnerException.GetType().Name,
-                    message = ex.InnerException.Message,
-                    stackTrace = ex.InnerException.StackTrace
-                };
-            }
-        }
-        else if (statusCode == HttpStatusCode.InternalServerError)
+        if (!_env.IsDevelopment() && statusCode == HttpStatusCode.InternalServerError)
         {
             problem.Extensions["hint"] = "Provide the traceId when contacting support.";
         }

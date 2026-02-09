@@ -89,7 +89,7 @@ public class CoursesController : ControllerBase
         }
         catch (InvalidOperationException ex)
         {
-            return BadRequest(ex.Message); // Handles the "No delete if used" rule
+            return BadRequest(ex.Message); 
         }
     }
 }

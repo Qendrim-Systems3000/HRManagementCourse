@@ -30,4 +30,22 @@ public class AuthController : ControllerBase
         if (!result.IsSuccess) return BadRequest(result);
         return Ok(result);
     }
+
+    /// <summary>Exchange a valid refresh token for a new access token and a new refresh token (rotation).</summary>
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto dto)
+    {
+        var result = await _authService.RefreshTokenAsync(dto.RefreshToken);
+        if (!result.IsSuccess) return Unauthorized(result);
+        return Ok(result);
+    }
+
+    /// <summary>Revoke a refresh token (e.g. on logout).</summary>
+    [HttpPost("revoke")]
+    public async Task<IActionResult> Revoke([FromBody] RefreshTokenDto dto)
+    {
+        var result = await _authService.RevokeRefreshTokenAsync(dto.RefreshToken);
+        if (!result.IsSuccess) return BadRequest(result);
+        return Ok(result);
+    }
 }

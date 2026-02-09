@@ -6,10 +6,12 @@ namespace HRManagement.Application.Services;
 public class CourseService : ICourseService
 {
     private readonly ICourseRepository _courseRepository;
+    private readonly ICourseTypeService _courseTypeService;
 
-    public CourseService(ICourseRepository courseRepository)
+    public CourseService(ICourseRepository courseRepository, ICourseTypeService courseTypeService)
     {
         _courseRepository = courseRepository;
+        _courseTypeService = courseTypeService;
     }
 
     public async Task<IEnumerable<Course>> GetCoursesAsync(int? typeId, DateTime? date, bool? approved)
@@ -25,12 +27,12 @@ public class CourseService : ICourseService
 
     public async Task CreateCourseAsync(Course course)
     {
-        // Rule: Don't allow duplicate Course
-        // We check if a course with the same description and start date exists
+        var courseType = await _courseTypeService.GetByIdAsync(course.CourseTypeId);
+        if (courseType == null)
+            throw new KeyNotFoundException("Course type does not exist.");
+
         if (await _courseRepository.CourseExistsAsync(course.Description, course.StartDate))
-        {
             throw new InvalidOperationException("A course with this description and start date already exists.");
-        }
 
         await _courseRepository.AddAsync(course);
         await _courseRepository.SaveChangesAsync();
@@ -38,9 +40,12 @@ public class CourseService : ICourseService
 
     public async Task UpdateCourseAsync(Course course)
     {
-        // Note: Global filters ensure the user can only update a course in their district
         var existing = await _courseRepository.GetByIdAsync(course.CourseId);
         if (existing == null) throw new KeyNotFoundException("Course not found in your district.");
+
+        var courseType = await _courseTypeService.GetByIdAsync(course.CourseTypeId);
+        if (courseType == null)
+            throw new KeyNotFoundException("Course type does not exist.");
 
         _courseRepository.Update(course);
         await _courseRepository.SaveChangesAsync();

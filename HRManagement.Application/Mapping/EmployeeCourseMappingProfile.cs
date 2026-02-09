@@ -9,10 +9,28 @@ public class EmployeeCourseMappingProfile : Profile
     public EmployeeCourseMappingProfile()
     {
         CreateMap<EmployeeCourse, EmployeeCourseResponseDto>()
-            .ForMember(d => d.CourseDescription, opt => opt.MapFrom(s => s.Course != null ? s.Course.Description : ""));
+            .ConstructUsing(ec => new EmployeeCourseResponseDto(
+                ec.EmployeeCourseId,
+                ec.EmployeeId,
+                ec.CourseId,
+                ec.Course != null ? ec.Course.Description : "",
+                ec.StartDate,
+                ec.EndDate,
+                ec.Hours,
+                ec.Credits,
+                ec.DistrictCost,
+                ec.EmployeeCost,
+                ec.Grade,
+                ec.Major,
+                ec.Notes));
 
         CreateMap<EmployeeCourse, EmployeeCourseTranscriptDto>()
-            .ForMember(d => d.CourseDescription, opt => opt.MapFrom(s => s.Course != null ? s.Course.Description : ""));
+            .ConstructUsing(ec => new EmployeeCourseTranscriptDto(
+                ec.EmployeeCourseId,
+                ec.EmployeeId,
+                ec.Course != null ? ec.Course.Description : "",
+                ec.StartDate,
+                ec.Grade));
 
         CreateMap<EnrollEmployeeDto, EmployeeCourse>();
         CreateMap<UpdateEmployeeCourseDto, EmployeeCourse>()

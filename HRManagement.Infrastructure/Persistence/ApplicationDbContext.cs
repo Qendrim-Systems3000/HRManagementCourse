@@ -21,6 +21,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Course> Courses => Set<Course>();
     public DbSet<Employee> Employees => Set<Employee>();
     public DbSet<EmployeeCourse> EmployeeCourses => Set<EmployeeCourse>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -51,6 +52,16 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
         builder.Entity<Course>().HasQueryFilter(e => e.LeaProfileId == (_tenantService.GetCurrentTenantIdOrNull() ?? -1));
         builder.Entity<Employee>().HasQueryFilter(e => e.LeaProfileId == (_tenantService.GetCurrentTenantIdOrNull() ?? -1));
         builder.Entity<EmployeeCourse>().HasQueryFilter(e => e.LeaProfileId == (_tenantService.GetCurrentTenantIdOrNull() ?? -1));
+
+        // 4. Refresh tokens (no tenant filter)
+        builder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasIndex(e => e.Token).IsUnique();
+            entity.HasOne(e => e.User)
+                  .WithMany()
+                  .HasForeignKey(e => e.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
+        });
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
